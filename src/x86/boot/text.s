@@ -4,6 +4,8 @@
 
 .type print_text, @function
 
+.text
+
 print_text:
     mov $0xe, %ah      # sets AH to 0xE (indicates teletype function)
 print_char:
