@@ -13,11 +13,11 @@ _start:
     mov %ax, %ss               # initialize stack segment at 0x9000
     mov $0xF000, %sp           # set bottom of stack 0x9000:0xF000
     cld                        # don't automatically print next string in mem
-
+disk_read:
     mov $0x00, %ah
     int $0x13                  # call INT 13,0 - Reset Disk System
     jc disk_error              # print disk_error_msg if failure
-disk_read:
+
     mov $0x07e0, %ax
     mov %ax, %es               # set up buffer for read
     mov $0x0000, %bx           # buffer pointing to 0x07e0:0x0000 -> 0x7e00
