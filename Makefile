@@ -1,28 +1,41 @@
-# paths to assembly source files
-x86_asm_source_files := $(shell find src/x86 -name *.s)
+dir_src := src
+dir_build := build
+dir_dist := dist
 
-# paths to object files to be assembled
-x86_asm_object_files := $(patsubst src/x86/%.s, build/x86/%.o, $(x86_asm_source_files))
+x86_stage1_object := $(dir_build)/x86/boot/stage1.o
+x86_stage2_object := $(dir_build)/x86/boot/stage2.o
+x86_stage1_bin := $(dir_dist)/x86/boot/stage1.bin
+x86_stage2_bin := $(dir_dist)/x86/boot/stage2.bin
+x86_image := $(dir_dist)/x86/simpleOS.img
 
-# garbage output files to be erased
-x86_asm_out_files := $(shell find -name *.out)
-
-# assembles objects from modified assembly source files
-$(x86_asm_object_files): build/x86/%.o: src/x86/%.s
+$(dir_build)/%.o: $(dir_src)/%.s
 	mkdir -p $(dir $@) && \
-	as $(patsubst build/x86/%.o, src/x86/%.s, $@) -o $@
+	as --32 $< -o $@
+
+$(x86_stage1_bin): $(x86_stage1_object)
+	mkdir -p $(dir $@) && \
+	ld $< -m elf_i386 --oformat binary -Ttext 0x7c00 -e _start -o $@
+
+$(x86_stage2_bin): $(x86_stage2_object)
+	mkdir -p $(dir $@) && \
+	ld $< -m elf_i386 --oformat binary -Ttext 0x0000 -e _start -o $@
+
+
+$(x86_image): $(x86_stage1_bin) $(x86_stage2_bin)
+	mkdir -p $(dir $@) && \
+ 	cat $(x86_stage1_bin) $(x86_stage2_bin) > $@
+
+.PHONY: x86 clean
 
 # build 'dist/x86/kernel.bin'
-.PHONY: x86
-x86: $(x86_asm_object_files)
-	mkdir -p dist/x86 && \
-	ld $(x86_asm_object_files) --oformat binary -Ttext 0x7c00 -e _start -o dist/x86/kernel.bin 
+x86: $(x86_image)
 
 # cleans up the development environment
-# handles:  .out files
-.PHONY: clean
-clean: $(x86_asm_out_files)
-	if [ "$(x86_asm_out_files)" != "" ]; then rm "$(x86_asm_out_files)"; fi
+clean:
+	rm -f *.out && \
+	rm -rf $(dir_build)
+	rm -rf $(dir_dist)
+
 
 # useful for debugging, pass a variable name and it will print it
 # e.g. 'make build-x86 print-x86_asm_objects'
