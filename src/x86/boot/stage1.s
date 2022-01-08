@@ -2,6 +2,8 @@
 
 .global _start
 
+.text
+
 _start:
     xor %ax, %ax
     mov %ax, %ds               # set data segment to 0

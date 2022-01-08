@@ -2,6 +2,8 @@
 
 .global _start
 
+.text
+
 _start:
     mov %cs, %ax            # code segment is 0x7e00
     mov %ax, %ds            # set data segment equal to code segment
@@ -13,8 +15,6 @@ _end:
     sti                     # terminate with infinite loop
     hlt
     jmp _end
-
-.include "src/x86/boot/text.s"
 
 hello_world: .ascii "Hello world!"
 .byte 0x0A
