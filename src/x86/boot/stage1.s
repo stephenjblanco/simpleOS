@@ -139,6 +139,6 @@ success_msg: .ascii "Success, loading stage 2."
 # stage 2 binary
 stage2_start:
 
-.incbin "dist/x86/boot/stage2.bin"
+.incbin "build/x86/boot/bin/stage2.bin"
 
 stage2_end:

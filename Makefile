@@ -22,13 +22,15 @@ $(dir_build)/%.o: $(dir_src)/%.s
 	mkdir -p $(dir $@) && \
 	$(x86_as) --32 $< -o $@
 
-$(x86_stage1_bin): $(x86_stage1_objects) $(x86_stage2_bin)
-	mkdir -p $(dir $@) && \
-	$(x86_ld) $< -m elf_i386 --oformat binary -Ttext 0x7c00 -e _start -o $@
-
 $(x86_stage2_bin): $(x86_stage2_objects) $(x86_stage2_targets)
 	mkdir -p $(dir $@) && \
 	$(x86_ld) $(x86_stage2_objects) -T $(x86_stage2_targets) -o $@
+
+$(x86_stage1_objects): $(x86_stage2_bin)
+
+$(x86_stage1_bin): $(x86_stage1_objects)
+	mkdir -p $(dir $@) && \
+	$(x86_ld) $< -m elf_i386 --oformat binary -Ttext 0x7c00 -e _start -o $@
 
 $(x86_image): $(x86_stage1_bin)
 	mkdir -p $(dir $@) && \
