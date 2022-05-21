@@ -12,7 +12,8 @@ x86_stage1_objects := $(dir_build)/$(path_x86_boot)/stage1.o
 x86_stage1_bin := $(dir_build)/$(path_x86_boot)/bin/stage1.bin
 
 x86_stage2_objects := $(dir_build)/$(path_x86_boot)/stage2.o $\
-	$(dir_build)/$(path_x86_boot)/text.o
+	$(dir_build)/$(path_x86_boot)/text.o $\
+	$(dir_build)/$(path_x86_boot)/protected_mode.o
 x86_stage2_targets := $(dir_targets)/$(path_x86_boot)/stage2.ld
 x86_stage2_bin := $(dir_build)/$(path_x86_boot)/bin/stage2.bin
 

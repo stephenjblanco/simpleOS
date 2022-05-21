@@ -1,3 +1,11 @@
+#########################################
+#
+#  stage1.s
+#  - loads stage 2 bootloader from disk
+#  - long jumps to stage 2 in memory
+#
+#########################################
+
 .code16
 
 .global _start
@@ -67,7 +75,6 @@ finish:
     hlt
     jmp finish
 
-##
 #  Converts current LBA (logical block address) to Cylinder-Head-Sector notation.
 #  Sets relevant input registers for INT 13,2 - Read Disk Sectors.
 #
@@ -82,7 +89,6 @@ finish:
 #                 lower 6 bits are sector
 #            DH - head
 #            DL - boot device
-##
 lba_to_chs:
     push %dx                      # DL already set to boot device, push to stack
     xor %dx, %dx                  # upper 16-bits (DX) set to 0 for DIV,
@@ -104,19 +110,16 @@ lba_to_chs:
     
 .include "src/x86/boot/text.s"
 
-##
 #  Disk info for converting LBA to CHS notation. Valid for a 1.44 MB floppy.
 #  Later on, we'll set these values dynamically using a BIOS function.
 #  This way, our bootloader is not restricted to a specific type of media.
-##
 num_heads: .word 2
 sectors_per_track: .word 18
 
 # number of disk-read retries before failing
 num_disk_retries: .word 3
 
-
-# first sector to read, and last sector (which doesn't get read).
+# first sector to read, and last sector (which doesn't get read)
 stage2_lba_start: .word 1
 stage2_lba_end: .word ((stage2_end - stage2_start + 511) / 512) + 1
 
