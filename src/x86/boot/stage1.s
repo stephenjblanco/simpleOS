@@ -8,11 +8,11 @@
 
 .code16
 
-.global _start
+.global _stage1
 
 .text
 
-_start:
+_stage1:
     xor %ax, %ax
     mov %ax, %ds                 # set data segment to 0
     mov %ax, %es                 # set extended segment to 0
@@ -108,7 +108,7 @@ lba_to_chs:
     mov %al, %dl                 # DL: boot device
     ret
     
-.include "src/x86/boot/text.s"
+.include "text.s"
 
 #  Disk info for converting LBA to CHS notation. Valid for a 1.44 MB floppy.
 #  Later on, we'll set these values dynamically using a BIOS function.
@@ -121,7 +121,7 @@ num_disk_retries: .word 3
 
 # first sector to read, and last sector (which doesn't get read)
 stage2_lba_start: .word 1
-stage2_lba_end: .word ((stage2_end - stage2_start + 511) / 512) + 1
+stage2_lba_end: .word ((_stage2_end - _stage2 + 511) / 512) + 1
 
 disk_error_msg: .ascii "Error reading disk."
 .byte 0x0A
@@ -134,14 +134,16 @@ success_msg: .ascii "Success, loading stage 2."
 .byte 0x00
 
 # bootloader must be 512 bytes long
-.fill 510-(. - _start), 1, 0
+.fill 510-(. - _stage1), 1, 0
 
 # magic number '0x55aa', that tells BIOS this binary is bootable 
 .word 0xaa55
 
+_stage1_end:
+
 # stage 2 binary
-stage2_start:
+_stage2:
 
-.incbin "build/x86/boot/bin/stage2.bin"
+.incbin "stage2.bin"
 
-stage2_end:
+_stage2_end:
