@@ -1,14 +1,21 @@
-ENTRY(_start)
+ENTRY(_stage2)
 OUTPUT_FORMAT(binary)
 SECTIONS
 {
     . = 0x0000;
     .stage2 : { 
-        build/x86/boot/stage2.o (.text) 
-        build/x86/boot/stage2.o (.data)
+        stage2.o (.text) 
     }
-    .protected : { 
-        build/x86/boot/protected_mode.o (.text)
-        build/x86/boot/protected_mode.o (.data)
+    .lib : { 
+        text.o (.text)
+        protected_mode.o (.text)
+        gdt.o (.text)
+    }
+    .data : {
+        stage2.o (.data)
+        protected_mode.o (.data)
+    }
+    .gdt : {
+        gdt.o (.data)
     }
 }

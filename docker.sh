@@ -25,7 +25,7 @@ function build() {
     #   t - tag for image
 
     docker build  \
-        env  \
+        .env  \
         -t "$1"
 }
 

@@ -1,4 +1,5 @@
 *.out
 *.[oa]
-build/
-dist
+dist/
+targets/**/bin/
+targets/**/obj/
